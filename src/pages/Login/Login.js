@@ -18,7 +18,10 @@ export default ({navigation}) => {
         onChangeText={setPassword}
         secure
       />
-      <Button text="Giriş Yap" />
+      <Button
+        text="Giriş Yap"
+        onPress={() => navigation.navigate('RoomsPage')}
+      />
       <Button
         text="Kayıt Ol"
         type="secondary"

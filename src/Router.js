@@ -19,8 +19,8 @@ export default () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="AuthStack" component={AuthStack} />
-        <Stack.Screen name="Home" component={Rooms} />
+        {/* <Stack.Screen name="AuthStack" component={AuthStack} /> */}
+        <Stack.Screen name="RoomsPage" component={Rooms} />
       </Stack.Navigator>
     </NavigationContainer>
   );
