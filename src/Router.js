@@ -22,9 +22,34 @@ export default () => {
   }, []);
 
   const AuthStack = () => (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="LoginPage" component={Login} />
       <Stack.Screen name="SignPage" component={Sign} />
+    </Stack.Navigator>
+  );
+  const AppStack = () => (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Rooms"
+        component={Rooms}
+        options={{
+          headerRight: () => (
+            <TouchableOpacity onPress={logout}>
+              <Icon name="logout" size={32} color={colors.primary} />
+            </TouchableOpacity>
+          ),
+          headerTitleAlign: 'center',
+          headerTintColor: colors.primary,
+          headerTitleStyle: {fontSize: 32},
+        }}
+      />
+      <Stack.Screen
+        name="Messages"
+        component={Messages}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 
@@ -36,31 +61,12 @@ export default () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        {!userSession && (
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        {!userSession ? (
           <Stack.Screen name="AuthStack" component={AuthStack} />
+        ) : (
+          <Stack.Screen name="AppStack" component={AppStack} />
         )}
-        <Stack.Screen
-          name="Rooms"
-          component={Rooms}
-          options={{
-            headerRight: () => (
-              <TouchableOpacity onPress={logout}>
-                <Icon name="logout" size={32} color={colors.primary} />
-              </TouchableOpacity>
-            ),
-            headerTitleAlign: 'center',
-            headerTintColor: colors.primary,
-            headerTitleStyle: {fontSize: 32},
-          }}
-        />
-        <Stack.Screen
-          name="Messages"
-          component={Messages}
-          options={{
-            headerShown: false,
-          }}
-        />
       </Stack.Navigator>
       <FlashMessage position="top" />
     </NavigationContainer>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, Text} from 'react-native';
+import {FlatList, SafeAreaView, Text, View} from 'react-native';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
 
@@ -8,6 +8,7 @@ import MessageCard from '../../components/MessageCard';
 import FloatingButton from '../../components/FloatingButton';
 import Modal from '../../components/Modal';
 import parseMessages from '../../utils/parseContentFromRooms';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default ({route, navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,12 +45,31 @@ export default ({route, navigation}) => {
         user: user.email,
         createdAt: new Date().toISOString(),
       })
+      .then(() => {
+        setMessage('');
+        setModalVisible(false);
+      })
+      .catch(err => console.log(err));
+  }
+
+  function logout() {
+    auth()
+      .signOut()
       .catch(err => console.log(err));
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>{route.params.roomName}</Text>
+      <View style={styles.header_container}>
+        <Icon
+          name="arrow-left"
+          size={34}
+          color="white"
+          onPress={() => navigation.goBack()}
+        />
+        <Text style={styles.title}>{route.params.roomName}</Text>
+        <Icon name="logout" size={34} color="white" onPress={logout} />
+      </View>
       <FlatList
         style={styles.list}
         data={messagesData}

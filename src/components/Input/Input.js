@@ -12,6 +12,7 @@ export default ({value, placeholder, onChangeText, secure = false}) => {
         placeholder={placeholder}
         onChangeText={onChangeText}
         secureTextEntry={secure}
+        autoFocus={true}
       />
     </View>
   );

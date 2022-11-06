@@ -6,6 +6,12 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light,
   },
+  header_container: {
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   title: {
     color: 'white',
     fontSize: 44,
