@@ -13,6 +13,7 @@ export default ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [roomName, setRoomName] = useState(null);
   const [roomsData, setRoomsData] = useState(null);
+  const [count, setCount] = useState(0);
 
   const user = auth().currentUser;
 
@@ -31,9 +32,10 @@ export default ({navigation}) => {
       .once('value')
       .then(snapshot => {
         setRoomsData(parseRooms(snapshot.val()));
+        console.log(snapshot.val());
       })
       .catch(err => console.log(err));
-  }, []);
+  }, [count]);
 
   function createRoom() {
     database()
@@ -42,6 +44,11 @@ export default ({navigation}) => {
         name: roomName,
         createdBy: user.email,
         createdAt: new Date().toISOString(),
+      })
+      .then(() => {
+        setRoomName('');
+        setCount(count + 1);
+        setModalVisible(false);
       })
       .catch(err => console.log(err));
   }
