@@ -1,32 +1,68 @@
-import React from 'react';
-import {FlatList, SafeAreaView, Text} from 'react-native';
-import Seperator from '../../components/Seperator';
+import React, {useEffect, useState} from 'react';
+import {FlatList, SafeAreaView} from 'react-native';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 import styles from './Rooms.style';
 import FloatingButton from '../../components/FloatingButton';
-import RoomIcon from '../../components/RoomIcon/RoomIcon';
+import RoomIcon from '../../components/RoomIcon';
+import Modal from '../../components/Modal';
+import parseRooms from '../../utils/parseContentFromRooms';
 
-const data = [
-  {id: 0, text: 'Python'},
-  {id: 1, text: 'Unity'},
-  {id: 2, text: 'Kotlin'},
-  {id: 3, text: 'React'},
-  {id: 4, text: 'PHP'},
-];
+export default ({navigation}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [roomName, setRoomName] = useState(null);
+  const [roomsData, setRoomsData] = useState(null);
 
-export default () => {
-  const renderRoom = ({item}) => <RoomIcon text={item.text} />;
+  const user = auth().currentUser;
+
+  const renderRoom = ({item}) => (
+    <RoomIcon
+      text={item.name}
+      onPress={() =>
+        navigation.navigate('Messages', {roomId: item.id, roomName: item.name})
+      }
+    />
+  );
+
+  useEffect(() => {
+    database()
+      .ref('/rooms')
+      .once('value')
+      .then(snapshot => {
+        setRoomsData(parseRooms(snapshot.val()));
+      })
+      .catch(err => console.log(err));
+  }, []);
+
+  function createRoom() {
+    database()
+      .ref('/rooms/')
+      .push({
+        name: roomName,
+        createdBy: user.email,
+        createdAt: new Date().toISOString(),
+      })
+      .catch(err => console.log(err));
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Rooms</Text>
-      <Seperator />
       <FlatList
         style={styles.list}
-        data={data}
+        data={roomsData}
+        keyExtractor={item => item.id}
         renderItem={item => renderRoom(item)}
         numColumns={2}
       />
-      <FloatingButton />
+      <Modal
+        value={roomName}
+        onChangeText={setRoomName}
+        isVisible={modalVisible}
+        closeModal={() => setModalVisible(false)}
+        onSend={createRoom}
+      />
+      <FloatingButton onPress={() => setModalVisible(!modalVisible)} />
     </SafeAreaView>
   );
 };
